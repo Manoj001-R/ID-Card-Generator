@@ -8,11 +8,12 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: linear-gradient(to right, #4a90e2, #8e54e9);
+      background: linear-gradient(to right, #45a3e5, #4d86dc, #8e54e9);
     }
 
     #idCard {
@@ -23,10 +24,21 @@
       max-width: 400px;
       width: 100%;
       text-align: center;
-      transition: transform 0.3s;
     }
 
-    input, select, button {
+  #idCardImage {
+    max-width: 2cm; /* Set maximum width */
+    max-height: 4cm; /* Set maximum height */
+    width: auto; /* Ensure aspect ratio is maintained */
+    height: auto; /* Ensure aspect ratio is maintained */
+  }
+
+
+    input[type="text"],
+    select,
+    input[type="file"],
+    input[type="email"],
+    input[type="tel"] {
       width: calc(100% - 20px);
       padding: 10px;
       margin: 10px 0;
@@ -35,12 +47,17 @@
       transition: border-color 0.3s;
     }
 
-    input:focus, select:focus {
+    input[type="text"]:focus,
+    select:focus,
+    input[type="file"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus {
       outline: none;
       border-color: #007bff;
     }
 
     button {
+      padding: 10px 20px;
       background-color: #007bff;
       color: white;
       border: none;
@@ -56,15 +73,21 @@
     .idCardInfo {
       margin-top: 20px;
       text-align: left;
-      display: none;
     }
 
     .idCardInfo p {
       margin: 10px 0;
+      color: #555;
     }
 
     .idCardInfo p strong {
       color: #333;
+    }
+
+    #icon {
+      width: 50px;
+      height: auto;
+      margin-bottom: 20px;
     }
 
     h1 {
@@ -72,12 +95,17 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 20px;
+      color: #333;
     }
 
     h1 img {
       margin-right: 10px;
-      width: 20px;
-      height: auto;
+    }
+
+    #idCardImage {
+      max-width: 100%;
+      border-radius: 5px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -98,7 +126,7 @@
     <input type="text" id="address" placeholder="Enter your address">
     <input type="file" id="photo" accept="image/*"> <!-- File input for photo upload -->
     <button onclick="generateIDCard()">Generate ID Card</button>
-    <div id="generatedIDCard" class="idCardInfo">
+    <div id="generatedIDCard" style="display: none;" class="idCardInfo">
       <h2>ID Card</h2>
       <img id="idCardImage" src="" alt="ID Card">
       <p><strong>Name:</strong> <span id="displayedName"></span></p>
@@ -108,10 +136,37 @@
       <p><strong>Email:</strong> <span id="displayedEmail"></span></p>
       <p><strong>Phone:</strong> <span id="displayedPhone"></span></p>
       <p><strong>Address:</strong> <span id="displayedAddress"></span></p>
+
+      <!-- Add radio buttons for file format selection -->
+<input type="radio" id="pngFormat" name="fileFormat" value="png" checked>
+<label for="pngFormat">PNG</label>
+<input type="radio" id="pdfFormat" name="fileFormat" value="pdf">
+<label for="pdfFormat">PDF</label>
+
+<!-- Modify the Download ID Card button -->
+<button onclick="generateAndDownloadIDCard()">Download ID Card</button>
+
+
+
     </div>
   </div>
 
   <script>
+  function downloadIDCard() {
+    var idCardContainer = document.getElementById('idCard'); // Get the ID card container
+    html2canvas(idCardContainer).then(function(canvas) { // Use html2canvas to capture the content
+      // Convert canvas to data URL and set image file name
+      var imageData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+      // Create a temporary anchor element
+      var downloadLink = document.createElement('a');
+      downloadLink.href = imageData; // Set the href attribute to the data URL
+      downloadLink.download = 'id_card.png'; // Set the download attribute to specify the file name
+      downloadLink.click(); // Simulate a click on the anchor element to trigger the download
+    });
+  }
+
+
+
     function generateIDCard() {
       var name = document.getElementById("name").value;
       var jobTitle = document.getElementById("jobTitle").value;
@@ -141,6 +196,65 @@
 
       document.getElementById("generatedIDCard").style.display = "block"; // Show generated ID card
     }
+    
+ 
+  function generateAndDownloadIDCard() {
+    // Generate the ID card
+    generateIDCard();
+    
+    // Delay for a short time to allow the ID card to render
+    setTimeout(function() {
+      // Capture the ID card container as an image using html2canvas
+      html2canvas(document.getElementById('idCard')).then(function(canvas) {
+        // Convert canvas to data URL
+        var imageData = canvas.toDataURL("image/png");
+        
+        // Create a temporary anchor element
+        var downloadLink = document.createElement('a');
+        downloadLink.href = imageData; // Set the href attribute to the data URL
+        downloadLink.download = 'generated_id_card.png'; // Set the download attribute to specify the file name
+        downloadLink.click(); // Simulate a click on the anchor element to trigger the download
+      });
+    }, 500); // Adjust delay as needed based on rendering time
+  }
+    
+  function generateAndDownloadIDCard() {
+    // Generate the ID card
+    generateIDCard();
+    
+    // Delay for a short time to allow the ID card to render
+    setTimeout(function() {
+      // Capture the ID card container as an image using html2canvas
+      html2canvas(document.getElementById('idCard')).then(function(canvas) {
+        var fileFormat = document.querySelector('input[name="fileFormat"]:checked').value; // Get selected file format
+
+        if (fileFormat === 'png') {
+          // Convert canvas to data URL (PNG format)
+          var imageData = canvas.toDataURL("image/png");
+          downloadImage(imageData);
+        } else if (fileFormat === 'pdf') {
+          // Convert canvas to PDF
+          var pdf = new jsPDF();
+          pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 297); // Set page size to A4
+          downloadPDF(pdf);
+        }
+      });
+    }, 500); // Adjust delay as needed based on rendering time
+  }
+
+  function downloadImage(imageData) {
+    var downloadLink = document.createElement('a');
+    downloadLink.href = imageData;
+    downloadLink.download = 'generated_id_card.png';
+    downloadLink.click();
+  }
+
+  function downloadPDF(pdf) {
+    pdf.save('generated_id_card.pdf');
+  }
+
+
+
   </script>
 </body>
 </html>
