@@ -114,12 +114,12 @@
     <h1><img id="icon" src="id-card.png" alt="ID Card Icon">ID Card Generator</h1>
     <input type="text" id="name" placeholder="Enter your name">
     <input type="text" id="jobTitle" placeholder="Enter your job title">
-    <input type="text" id="company" placeholder="Enter your company name">
+    <input type="text" id="institution" placeholder="Enter your Institution name">
     <select id="department">
-      <option value="IT">IT</option>
-      <option value="Marketing">Marketing</option>
-      <option value="Finance">Finance</option>
-      <option value="HR">HR</option>
+      <option value="Computer Science and Engineering">Computer Science and Engineering</option>
+      <option value="Information Technology">Information Technology</option>
+      <option value="Electrical and Communication Engineering">Electrical and Communication Engineerin</option>
+      <option value="Bio Technology">Bio Technology</option>
     </select>
     <input type="email" id="email" placeholder="Enter your email">
     <input type="tel" id="phone" placeholder="Enter your phone number">
@@ -131,7 +131,7 @@
       <img id="idCardImage" src="" alt="ID Card">
       <p><strong>Name:</strong> <span id="displayedName"></span></p>
       <p><strong>Job Title:</strong> <span id="displayedJobTitle"></span></p>
-      <p><strong>Company:</strong> <span id="displayedCompany"></span></p>
+      <p><strong>Institution:</strong> <span id="displayedCompany"></span></p>
       <p><strong>Department:</strong> <span id="displayedDepartment"></span></p>
       <p><strong>Email:</strong> <span id="displayedEmail"></span></p>
       <p><strong>Phone:</strong> <span id="displayedPhone"></span></p>
@@ -170,7 +170,7 @@
     function generateIDCard() {
       var name = document.getElementById("name").value;
       var jobTitle = document.getElementById("jobTitle").value;
-      var company = document.getElementById("company").value;
+      var institution= document.getElementById("institution").value;
       var department = document.getElementById("department").value;
       var email = document.getElementById("email").value;
       var phone = document.getElementById("phone").value;
@@ -180,7 +180,7 @@
       // Display user input on the ID card
       document.getElementById("displayedName").innerText = name;
       document.getElementById("displayedJobTitle").innerText = jobTitle;
-      document.getElementById("displayedCompany").innerText = company;
+      document.getElementById("displayedCompany").innerText = institution;
       document.getElementById("displayedDepartment").innerText = department;
       document.getElementById("displayedEmail").innerText = email;
       document.getElementById("displayedPhone").innerText = phone;
